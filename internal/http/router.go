@@ -1,8 +1,11 @@
 package http
 
-import "net/http"
+import (
+	"net/http"
+	"gorm.io/gorm"
+)
 
-func SetupRouter() http.Handler{
+func SetupRouter(db *gorm.DB) http.Handler{
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
