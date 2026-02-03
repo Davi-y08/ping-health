@@ -2,14 +2,18 @@ package ping
 
 import (
 	"ping-health/internal/domain/monitor"
-	"gorm.io/gorm"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type Ping struct {
-	gorm.Model
+	ID        	uuid.UUID 		`gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	StatusCode 	int 			`json:"status_code"`
 	Status	    bool			`json:"status"`
 	URL 		string 			`json:"url"`
-	MonitorID	uint			`json:"monitor_id"`
-	Montitor 	monitor.Monitor	`gorm:"foreignKey:MonitorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	MonitorID	uuid.UUID		`gorm:"type:uuid;not null"`
+	Montitor 	monitor.Monitor	`gorm:"foreignKey:MonitorID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	CreatedAt 	time.Time
+	UpdatedAt 	time.Time
 }
