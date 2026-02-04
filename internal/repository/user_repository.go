@@ -3,8 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
-	"os/user"
-
+	"ping-health/internal/domain/user"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -25,6 +24,20 @@ func (r *UserRepository) GetUserById(ctx context.Context, id uuid.UUID) (*user.U
 	var u *user.User
 	
 	if err := r.db.WithContext(ctx).Model(&user.User{}).First(u, id).Error; err != nil{
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, gorm.ErrRecordNotFound
+		}
+
+		return nil, err
+	}
+
+	return u, nil
+}
+
+func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*user.User, error){
+	var u *user.User
+
+	if err := r.db.WithContext(ctx).Model(&user.User{}).Where("email = ?", email).Find(&u).Error; err != nil{
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, gorm.ErrRecordNotFound
 		}
