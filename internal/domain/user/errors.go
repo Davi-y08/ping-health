@@ -7,4 +7,5 @@ var (
 	ErrUserInvalidData = errors.New("dados inválidos")
 	ErrHashedPassword = errors.New("erro ao hashear senha")
 	ErrExistingUser = errors.New("usuário já existente")
+	ErrInvalidCredentials = errors.New("credenciais inválidas")
 )

@@ -2,9 +2,12 @@ package user
 
 import (
 	"context"
-	"ping-health/internal/domain/user"
-	repo "ping-health/internal/repository"
+	"errors"
 	shared "ping-health/internal/application"
+	"ping-health/internal/domain/user"
+	security "ping-health/internal/infra/security"
+	repo "ping-health/internal/repository"
+
 	"gorm.io/gorm"
 )
 
@@ -34,4 +37,26 @@ func (s *UserService) CreateUser(ctx context.Context, dto CreateUserDto) (error)
 	}
 
 	return nil
+}
+
+func (s *UserService) Login(ctx context.Context, dto LoginDto) (*user.User, error){
+	if dto.Email == "" || dto.Password == ""{
+		return nil, user.ErrInvalidCredentials
+	}
+
+	u, err := s.repo.GetUserByEmail(ctx, dto.Email)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound){
+			return nil, user.ErrInvalidCredentials
+		}
+
+		return nil, shared.ErrInDataBase
+	}
+
+	if !security.CheckPassword(u.PasswordHash, dto.Password){
+		return nil, user.ErrInvalidCredentials
+	}
+
+	return u, nil
 }
