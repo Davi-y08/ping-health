@@ -2,10 +2,12 @@ package http
 
 import (
 	"net/http"
-	"gorm.io/gorm"
-	r "ping-health/internal/repository"
 	u "ping-health/internal/application/user"
 	h "ping-health/internal/http/handlers"
+	"ping-health/internal/http/middlewares"
+	r "ping-health/internal/repository"
+
+	"gorm.io/gorm"
 )
 
 func SetupRouter(db *gorm.DB) http.Handler{
@@ -20,7 +22,7 @@ func SetupRouter(db *gorm.DB) http.Handler{
 		w.Write([]byte("pong"))
 	})
 
-	mux.HandleFunc("POST /users", userHandler.CreateUserHandler)
+	mux.HandleFunc("POST /users", middlewares.ErrorsMiddleware(userHandler.CreateUserHandler))
 
 	return mux
 }

@@ -32,7 +32,7 @@ func (s *UserService) CreateUser(ctx context.Context, dto CreateUserDto) (error)
 		return user.ErrExistingUser
 	}
 
-	if err := s.repo.CreateUser(ctx, *u); err != nil{
+	if err := s.repo.CreateUser(ctx, u); err != nil{
 		return shared.ErrInDataBase
 	}
 

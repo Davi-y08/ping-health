@@ -41,3 +41,11 @@ func Internal(err error) *AppError{
 		Err:	err,
 	}
 }
+
+func MethodNotAllowed(err error) *AppError {
+	return &AppError{
+		Status: http.StatusMethodNotAllowed,
+		Message: "method not allowed",
+		Err:	 err,
+	}
+}

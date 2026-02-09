@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"ping-health/internal/domain/user"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -16,7 +17,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository{
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) CreateUser(ctx context.Context, u user.User) (error){
+func (r *UserRepository) CreateUser(ctx context.Context, u *user.User) (error){
 	return r.db.WithContext(ctx).Model(&user.User{}).Create(u).Error
 }
 
@@ -37,11 +38,11 @@ func (r *UserRepository) GetUserById(ctx context.Context, id uuid.UUID) (*user.U
 func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*user.User, error){
 	var u *user.User
 
-	if err := r.db.WithContext(ctx).Model(&user.User{}).Where("email = ?", email).Find(&u).Error; err != nil{
+	if err := r.db.WithContext(ctx).Model(&user.User{}).Where("email = ?", email).First(&u).Error; err != nil{
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, gorm.ErrRecordNotFound
 		}
-
+		
 		return nil, err
 	}
 
