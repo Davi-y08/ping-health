@@ -28,6 +28,10 @@ func ValidateDto(dto CreateUserDto) (*user.User, error) {
 		return nil, user.ErrUserInvalidData
 	}
 
+	if dto.ConfirmPassword != dto.PassWord {
+		return nil, user.ErrPasswordDontMatch
+	}
+
 	hash, err := security.HashPassword(dto.PassWord)
 
 	if err != nil {

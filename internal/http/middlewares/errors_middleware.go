@@ -7,8 +7,6 @@ import (
 	"ping-health/internal/httpx"
 )
 
-type AppHandler func(w http.ResponseWriter, r *http.Request) error
-
 func ErrorsMiddleware(next AppHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := next(w, r)

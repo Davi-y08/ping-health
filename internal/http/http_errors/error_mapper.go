@@ -17,6 +17,8 @@ func MapErrorsUser(err error) *httpx.AppError {
 			return httpx.Internal(err)
 		case errors.Is(err, dUser.ErrInvalidCredentials):
 			return httpx.Unauthorized(err)
+		case errors.Is(err, dUser.ErrPasswordDontMatch):
+			return httpx.BadRequest(err)
 		default:
 			return httpx.Internal(errors.New("erro interno -> user"))
 	}

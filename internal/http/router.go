@@ -23,6 +23,6 @@ func SetupRouter(db *gorm.DB) http.Handler{
 	})
 
 	mux.HandleFunc("POST /users", middlewares.ErrorsMiddleware(userHandler.CreateUserHandler))
-
+	mux.HandleFunc("POST /users/login", middlewares.ErrorsMiddleware(userHandler.LoginHandler))
 	return mux
 }

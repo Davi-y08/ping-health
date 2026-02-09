@@ -6,8 +6,10 @@ import (
 	"net/http"
 	appUser "ping-health/internal/application/user"
 	service "ping-health/internal/application/user"
-	"ping-health/internal/httpx"
 	mapErrors "ping-health/internal/http/http_errors"
+	"ping-health/internal/httpx"
+	security "ping-health/internal/infra/security"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct{
@@ -36,4 +38,42 @@ func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("user created"))
 	return nil
+}
+
+func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) error {
+	if r.Method != http.MethodPost {
+		return httpx.MethodNotAllowed(errors.New("method not allowed"))
+	}
+
+	var dto appUser.LoginDto
+
+	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil{
+		return httpx.BadRequest(errors.New("corpo inválido"))
+	}
+
+	user, err := h.service.Login(r.Context(), dto)
+
+	if err != nil{
+		return mapErrors.MapErrorsUser(err)
+	}
+
+	token, err := security.GenerateTokenJWT(user.ID)
+
+	csfr := uuid.NewString()
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    token,
+		Path:     "/",
+		MaxAge:	  (24 * 1) / 2,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+	})
+
+	w.WriteHeader(http.StatusCreated)
+	return json.NewEncoder(w).Encode(map[string]string{
+		"message": "login realizado com sucesso!",
+		"csfr": csfr,
+	})
 }
