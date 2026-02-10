@@ -17,7 +17,7 @@ func NewMonitorRepository(db *gorm.DB) *MonitorRepository {
 	return &MonitorRepository{db: db}
 }
 
-func (r *MonitorRepository) CreateMonitor(ctx context.Context, m monitor.Monitor) (error) {
+func (r *MonitorRepository) CreateMonitor(ctx context.Context, m *monitor.Monitor) (error) {
 	return r.db.WithContext(ctx).Model(&monitor.Monitor{}).Create(m).Error
 }
 
