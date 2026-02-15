@@ -2,8 +2,10 @@ package monitor
 
 import (
 	"context"
-	repo "ping-health/internal/repository"
 	shared "ping-health/internal/application"
+	"ping-health/internal/domain/monitor"
+	repo "ping-health/internal/repository"
+	"time"
 )
 
 type MonitorService struct{
@@ -25,5 +27,16 @@ func (s *MonitorService) CreateMonitorService(ctx context.Context, dto CreateMon
 		return shared.ErrInDataBase
 	}
 
+	go s.startMonitor(new_monitor)
+
 	return nil
+}
+
+func (s *MonitorService) startMonitor(m *monitor.Monitor){
+	ticker := time.NewTicker(time.Duration(m.Interval) * time.Second)
+	defer ticker.Stop()
+
+	for {
+		s.check()
+	}
 }

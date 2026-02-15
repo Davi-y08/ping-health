@@ -3,6 +3,7 @@ package httperrors
 import (
 	"errors"
 	dUser "ping-health/internal/domain/user"
+	dMonitor "ping-health/internal/domain/monitor"
 	"ping-health/internal/httpx"
 
 )
@@ -21,5 +22,14 @@ func MapErrorsUser(err error) *httpx.AppError {
 			return httpx.BadRequest(err)
 		default:
 			return httpx.Internal(errors.New("erro interno -> user"))
+	}
+}
+
+func MapErrorsMonitor(err error) *httpx.AppError {
+	switch {
+	case errors.Is(err, dMonitor.ErrInvalidData):
+		return httpx.BadRequest(err)
+	default:
+		return httpx.Internal(errors.New("erro interno -> monitor"))
 	}
 }
