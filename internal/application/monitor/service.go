@@ -61,6 +61,6 @@ func (s *MonitorService) check(url string){
 	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
 		fmt.Println(url, " online")
 	}else{
-		fmt.Println(url, "offline", resp.StatusCode)
+		fmt.Println(url, " offline", resp.StatusCode)
 	}
 }

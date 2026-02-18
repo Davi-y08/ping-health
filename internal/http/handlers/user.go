@@ -65,8 +65,8 @@ func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) error
 		Name:     "access_token",
 		Value:    token,
 		Path:     "/",
-		MaxAge:	  (24 * 1) / 2,
-		Secure:   true,
+		MaxAge:	  60 * 60 * 12,
+		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode,
 	})

@@ -23,7 +23,7 @@ func LoadJwtConfig() {
 
 func JWTAuthMiddleware(next AppHandler) AppHandler {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		cookie, err := r.Cookie("acess_token")
+		cookie, err := r.Cookie("access_token")
 
 		if err != nil{
 			return &httpx.AppError{
