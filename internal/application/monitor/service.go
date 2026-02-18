@@ -2,6 +2,8 @@ package monitor
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	shared "ping-health/internal/application"
 	"ping-health/internal/domain/monitor"
 	repo "ping-health/internal/repository"
@@ -37,6 +39,28 @@ func (s *MonitorService) startMonitor(m *monitor.Monitor){
 	defer ticker.Stop()
 
 	for {
-		s.check()
+		s.check(m.URL)
+		<-ticker.C
+	}
+}
+
+func (s *MonitorService) check(url string){
+	client := http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	resp, err := client.Get(url)
+
+	if err != nil {
+		fmt.Println("off")
+		return
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
+		fmt.Println(url, " online")
+	}else{
+		fmt.Println(url, "offline", resp.StatusCode)
 	}
 }

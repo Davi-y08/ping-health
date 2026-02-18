@@ -2,8 +2,6 @@ package monitor
 
 import (
 	dMonitor "ping-health/internal/domain/monitor"
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -20,7 +18,7 @@ func ValidateDto(dto CreateMonitorDto) (*dMonitor.Monitor, error){
 
 	new_monitor := &dMonitor.Monitor{
 		URL: dto.URL,
-		Interval: time.Duration(dto.Interval),
+		Interval: dto.Interval,
 		UserID: dto.UserID,
 	}
 
