@@ -48,3 +48,13 @@ func (r *MonitorRepository) GetMonitorsByUser(ctx context.Context, user_id uuid.
 
 	return ms, nil
 }
+
+func (r *MonitorRepository) GetAllMonitors(ctx context.Context) ([]monitor.Monitor, error)  {
+	var ms []monitor.Monitor
+
+	if err := r.db.WithContext(ctx).Model(&monitor.Monitor{}).Find(&ms).Error; err != nil {
+		return nil, err
+	}
+
+	return ms, nil
+}

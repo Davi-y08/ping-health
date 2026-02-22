@@ -18,6 +18,7 @@ func NewMonitorService(repo *repo.MonitorRepository) *MonitorService {
 	return &MonitorService{repo: repo}
 }
 
+
 func (s *MonitorService) CreateMonitorService(ctx context.Context, dto CreateMonitorDto) (error) {
 	new_monitor, err := ValidateDto(dto)
 
@@ -59,8 +60,22 @@ func (s *MonitorService) check(url string){
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
-		fmt.Println(url, " online")
+		fmt.Println(url, "online")
 	}else{
-		fmt.Println(url, " offline", resp.StatusCode)
+		fmt.Println(url, "offline", resp.StatusCode)
 	}
+}
+
+func (s *MonitorService) StartAllMonitors(ctx context.Context) error {
+	monitors, err := s.repo.GetAllMonitors(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, m := range monitors {
+		monitorCopy := m 
+		go s.startMonitor(&monitorCopy)
+	}
+
+	return nil
 }
